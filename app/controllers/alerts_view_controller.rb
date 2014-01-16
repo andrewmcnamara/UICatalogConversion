@@ -13,7 +13,7 @@ class AlertsViewController < UITableViewController
 
   def viewDidLoad
     super
-    self.title = NSLocalizedString("AlertTitle", "")
+    self.title = "AlertTitle"
  
     @data_source_array = [
       { title: "UIActionSheet", label: "Show Simple", source: "AlertsViewController.m - dialogSimpleAction" },
@@ -24,16 +24,13 @@ class AlertsViewController < UITableViewController
       { title: "UIAlertView", label: "Show Custom", source: "AlertsViewController.m - alertOtherAction" },
       { title: "UIAlertView", label: "Show Text Input", source: "AlertsViewController.m - alertSecureTextAction" }
     ]
-
-    self.tableView.registerClass(UITableViewCell.class, forCellReuseIdentifier: ALERT_CELL_ID)
-    self.tableView.registerClass(UITableViewCell.class, forCellReuseIdentifier: SOURCE_CELL_ID)
   end
 
   def dialogSimpleAction
-    action_sheet = UIActionSheet.alloc.initWithTitle(NSLocalizedString("UIActionSheetTitle", nil),
+    action_sheet = UIActionSheet.alloc.initWithTitle("UIActionSheetTitle",
       delegate:self,
       cancelButtonTitle: nil,
-      destructiveButtonTitle: NSLocalizedString("OKButtonTitle", nil),
+      destructiveButtonTitle: "OKButtonTitle",
       otherButtonTitles: nil
     )
     action_sheet.actionSheetStyle = UIActionSheetStyleDefault
@@ -41,10 +38,10 @@ class AlertsViewController < UITableViewController
   end
  
   def dialogOKCancelAction
-    action_sheet = UIActionSheet.alloc.initWithTitle(NSLocalizedString("UIActionSheetTitle", nil),
+    action_sheet = UIActionSheet.alloc.initWithTitle("UIActionSheetTitle",
       delegate:self,
-      cancelButtonTitle: NSLocalizedString(@"CancelButtonTitle", nil),
-      destructiveButtonTitle: NSLocalizedString("OKButtonTitle", nil),
+      cancelButtonTitle: "CancelButtonTitle",
+      destructiveButtonTitle: "OKButtonTitle",
       otherButtonTitles: nil
     )
     action_sheet.actionSheetStyle = UIActionSheetStyleDefault
@@ -52,11 +49,11 @@ class AlertsViewController < UITableViewController
   end
  
   def dialogOtherAction
-    action_sheet = UIActionSheet.alloc.initWithTitle(NSLocalizedString("UIActionSheetTitle", nil),
+    action_sheet = UIActionSheet.alloc.initWithTitle("UIActionSheetTitle",
       delegate:self,
       cancelButtonTitle: nil,
       destructiveButtonTitle: nil,
-      otherButtonTitles: NSLocalizedString("ButtonTitle1", nil), NSLocalizedString("ButtonTitle2", nil), nil
+      otherButtonTitles: "ButtonTitle1", "ButtonTitle2", nil
     )
     action_sheet.actionSheetStyle = UIActionSheetStyleDefault
     action_sheet.destructiveButtonIndex = 1
@@ -65,41 +62,41 @@ class AlertsViewController < UITableViewController
  
  
   def alertSimpleAction
-    alert = UIAlertView.alloc.initWithTitle(NSLocalizedString(@"UIAlertViewTitle", nil),
-      message: NSLocalizedString("UIAlertViewMessageGeneric", nil),
+    alert = UIAlertView.alloc.initWithTitle("UIAlertViewTitle",
+      message: "UIAlertViewMessageGeneric",
       delegate: self,
-      cancelButtonTitle: NSLocalizedString("OKButtonTitle", nil),
+      cancelButtonTitle: "OKButtonTitle",
       otherButtonTitles: nil
     )
     alert.show
   end
  
   def alertOKCancelAction
-    alert = UIAlertView.alloc.initWithTitle(NSLocalizedString(@"UIAlertViewTitle", nil),
-      message: NSLocalizedString("UIAlertViewMessageGeneric", nil),
+    alert = UIAlertView.alloc.initWithTitle("UIAlertViewTitle",
+      message: "UIAlertViewMessageGeneric",
       delegate: self,
-      cancelButtonTitle: NSLocalizedString("CancelButtonTitle", nil),
-      otherButtonTitles: NSLocalizedString("OKButtonTitle", nil), nil
+      cancelButtonTitle: "CancelButtonTitle",
+      otherButtonTitles: "OKButtonTitle", nil
     )
     alert.show
   end
 
   def alertOtherAction
-    alert = UIAlertView.alloc.initWithTitle(NSLocalizedString(@"UIAlertViewTitle", nil),
-      message: NSLocalizedString("UIAlertViewMessageGeneric", nil),
+    alert = UIAlertView.alloc.initWithTitle("UIAlertViewTitle",
+      message: "UIAlertViewMessageGeneric",
       delegate: self,
-      cancelButtonTitle: NSLocalizedString("CancelButtonTitle", nil),
-      otherButtonTitles: NSLocalizedString("ButtonTitle1", nil), NSLocalizedString("ButtonTitle2", nil), nil
+      cancelButtonTitle: "CancelButtonTitle",
+      otherButtonTitles: "ButtonTitle1", "ButtonTitle2", nil
     )
     alert.show
   end
 
   def alertSecureTextAction
-    alert = UIAlertView.alloc.initWithTitle(NSLocalizedString(@"UIAlertViewTitle", nil),
-      message: NSLocalizedString("UIAlertViewMessage", nil),
+    alert = UIAlertView.alloc.initWithTitle("UIAlertViewTitle",
+      message: "UIAlertViewMessage",
       delegate: self,
-      cancelButtonTitle: NSLocalizedString("CancelButtonTitle", nil),
-      otherButtonTitles: NSLocalizedString("OKButtonTitle", nil), nil
+      cancelButtonTitle: "CancelButtonTitle",
+      otherButtonTitles: "OKButtonTitle", nil
     )
     alert.alertViewStyle = UIAlertViewStyleSecureTextInput
     alert.show
@@ -131,7 +128,9 @@ class AlertsViewController < UITableViewController
   end
  
   def tableView(table_view, heightForRowAtIndexPath: index_path)
-    index_path.row == 0 ? 50.0 : 22.0
+    height = index_path.row == 0 ? 50.0 : 22.0
+    p "Height: #{height}"
+    return height
   end
 
   def tableView(table_view, didSelectRowAtIndexPath: index_path)
@@ -161,11 +160,15 @@ class AlertsViewController < UITableViewController
     cell = nil
 
     if index_path.row == 0
-      cell = tableView.dequeueReusableCellWithIdentifier(ALERT_CELL_ID, forIndexPath: index_path)
+      cell = tableView.dequeueReusableCellWithIdentifier(ALERT_CELL_ID) || begin
+        UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: ALERT_CELL_ID)
+      end
       cell.textLabel.text = @data_source_array[index_path.section][:label]
     else
 
-      cell = tableView.dequeueReusableCellWithIdentifier(SOURCE_CELL_ID, forIndexPath: index_path)
+      cell = tableView.dequeueReusableCellWithIdentifier(SOURCE_CELL_ID) || begin
+        UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier: SOURCE_CELL_ID)
+      end
       cell.selectionStyle = UITableViewCellSelectionStyleNone
         
       cell.textLabel.opaque = false
